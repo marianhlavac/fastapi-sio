@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-sio"
-version = "0.1.0"
+version = "0.1.1"
 description = "Socket.io for FastAPI with AsyncAPI documentation"
 authors = ["Marian Hlavac <m@marianhlavac.cz>"]
 license = "MIT"
@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.10"
 fastapi = ">=0.73.0,<1.0.0"
 python-socketio = ">=4.0.0,<6.0.0"
-pydantic = ">=1.7.0,<1.9.0"
+pydantic = ">=1.9.0,<2.0.0"
 websockets = ">=10.2,<11.0"
 
 [tool.poetry.dev-dependencies]
