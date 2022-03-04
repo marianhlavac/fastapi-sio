@@ -3,7 +3,7 @@
 ![FastAPI library](https://img.shields.io/badge/-FastAPI-009688?logo=fastapi&logoColor=white)
 ![Socket.io](https://img.shields.io/badge/-Socket.io-black?logo=socket.io&logoColor=white)
 ![Uses AsyncAPI](https://img.shields.io/badge/-AsyncAPI-4f8fbe)
-![Current state](https://img.shields.io/badge/status-prerelease-orange)
+![Current state](https://img.shields.io/badge/status-in_development-orange)
 
 **Socket.io FastAPI integration library with first-class documentation using AsyncAPI**
 
