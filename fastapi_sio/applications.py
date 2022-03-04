@@ -4,9 +4,8 @@ import socketio
 from fastapi import FastAPI
 
 from fastapi_sio.asyncapi import get_asyncapi
-from fastapi_sio.emitter import SIOJsonEmitter, SIOEmitterMeta
+from fastapi_sio.actors import SIOJsonEmitter, SIOEmitterMeta, SIOHandler
 from fastapi_sio.schemas.asyncapi import AsyncAPI, AsyncAPIServer
-from fastapi_sio.handler import SIOHandler
 from fastapi_sio.utils import find_cors_configuration
 
 T = TypeVar("T", bound=BaseModel)
@@ -92,6 +91,7 @@ class FastAPISIO:
         title: str | None = None,
         summary: str | None = None,
         description: str | None = None,
+        message_description: str | None = None,
         model: Type[BaseModel] | None = None,
         media_type: str = "application/json",
     ) -> Callable:
@@ -105,6 +105,7 @@ class FastAPISIO:
                     description=description,
                     model=model,
                     media_type=media_type,
+                    message_description=message_description,
                 )
             )
             self._sio.on(event=event, handler=fn)
@@ -118,6 +119,7 @@ class FastAPISIO:
         title: str | None = None,
         summary: str | None = None,
         description: str | None = None,
+        message_description: str | None = None,
         media_type: str = "application/json",
     ) -> SIOJsonEmitter[T]:
         emitter = SIOJsonEmitter(
@@ -129,6 +131,7 @@ class FastAPISIO:
                 description=description,
                 model=model,
                 media_type=media_type,
+                message_description=message_description,
             ),
             sio=self._sio,
         )

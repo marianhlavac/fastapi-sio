@@ -2,8 +2,7 @@ from typing import Dict, List, Type
 from pydantic import BaseModel
 
 from pydantic.schema import schema
-from fastapi_sio.emitter import SIOEmitterMeta
-from fastapi_sio.handler import SIOHandler
+from fastapi_sio.actors import SIOEmitterMeta, SIOHandler
 from fastapi_sio.schemas.asyncapi import (
     AsyncAPI,
     AsyncAPIChannel,
@@ -59,6 +58,9 @@ def get_channels(
                 summary=handler.summary,
                 description=handler.description,
                 message=AsyncAPIMessage(
+                    name=handler.event,
+                    contentType=handler.media_type,
+                    description=handler.message_description,
                     payload=OpenAPIReference(
                         **{"$ref": f"{SCHEMA_REF_PREFIX}{handler.model.__name__}"}
                     )
@@ -74,6 +76,9 @@ def get_channels(
                 summary=emitter.summary,
                 description=emitter.description,
                 message=AsyncAPIMessage(
+                    name=emitter.event,
+                    contentType=emitter.media_type,
+                    description=emitter.message_description,
                     payload=OpenAPIReference(
                         **{"$ref": f"{SCHEMA_REF_PREFIX}{emitter.model.__name__}"}
                     )
