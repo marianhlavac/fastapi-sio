@@ -42,12 +42,14 @@ purr_channel = sio_app.create_emitter(
     summary="Channel for belly rubs",
     description="Send your belly rubs through here!",
 )
-def handle_rub(sid, data):
-    purr_channel.emit(
-        FooModel(detail="Purr for all listeners")
+async def handle_rub(sid, data):
+    await purr_channel.emit(
+        PurrModel(loudness=2, detail="Purr for all listeners")
     )
     return "Ack to the one who rubbed"
 ```
+
+👉 [Check out the example AsyncAPI documentation output!](https://studio.asyncapi.com/?url=https://raw.githubusercontent.com/marianhlavac/fastapi-sio/master/examples/from_readme_asyncapi.json)
 
 By default (you can change these values):
  - the Socket.io endpoint path is **`/sio/socket.io`** (the `socket.io` part is set automatically by some clients)

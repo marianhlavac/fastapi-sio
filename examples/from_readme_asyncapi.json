@@ -1,0 +1,76 @@
+{
+    "asyncapi": "2.3.0",
+    "id": "urn:com:fastapi",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0",
+        "description": ""
+    },
+    "servers": {},
+    "defaultContentType": "application/json",
+    "channels": {
+        "rubs": {
+            "publish": {
+                "operationId": "handle_rub",
+                "summary": "Channel for belly rubs",
+                "description": "Send your belly rubs through here!",
+                "message": {
+                    "payload": {
+                        "$ref": "#/components/schemas/BellyRubModel"
+                    }
+                }
+            }
+        },
+        "purrs": {
+            "subscribe": {
+                "summary": "Channel for purrs",
+                "description": "Receive any purrs here!",
+                "message": {
+                    "payload": {
+                        "$ref": "#/components/schemas/PurrModel"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BellyRubModel": {
+                "title": "BellyRubModel",
+                "required": [
+                    "where_exactly",
+                    "scratches_num"
+                ],
+                "type": "object",
+                "properties": {
+                    "where_exactly": {
+                        "title": "Where Exactly",
+                        "type": "string"
+                    },
+                    "scratches_num": {
+                        "title": "Scratches Num",
+                        "type": "integer"
+                    }
+                }
+            },
+            "PurrModel": {
+                "title": "PurrModel",
+                "required": [
+                    "detail",
+                    "loudness"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    },
+                    "loudness": {
+                        "title": "Loudness",
+                        "type": "integer"
+                    }
+                }
+            }
+        }
+    }
+}
