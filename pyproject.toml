@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "fastapi-sio"
+version = "0.1.0"
+description = "Socket.io for FastAPI with AsyncAPI documentation"
+authors = ["Marian Hlavac <m@marianhlavac.cz>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.74.1"
+python-socketio = "^5.5.2"
+pydantic = "^1.9.0"
+websockets = "^10.2"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^22.1.0", allow-prereleases = true}
+uvicorn = "^0.17.5"
+pyright = "^1.1.226"
+
+[tool.pyright]
+exclude = ["typings","**/node_modules","**/__pycache__",".pytest_cache",".git",".venv"]
+typeCheckingMode = "basic"
+reportMissingImports = true
+pythonVersion = "3.10"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
