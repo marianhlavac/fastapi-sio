@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, List, Type, TypeVar
+from asyncio import AbstractEventLoop
+from typing import Callable, Dict, List, Type, TypeVar
 from pydantic import BaseModel
 import socketio
 from fastapi import FastAPI
@@ -40,15 +41,21 @@ class FastAPISIO:
         async_mode: str = "asgi",
         asyncapi_url: str | None = "/sio/docs",
         version: str | None = None,
+        other_asgi_app = None,
         servers: Dict[str, AsyncAPIServer] | None = None,
+        loop: AbstractEventLoop | None = None,
+        monitor_clients: bool = True,
     ):
         self._sio = socketio.AsyncServer(
             async_mode=async_mode,
             cors_allowed_origins=find_cors_configuration(app, default=[]),
+            monitor_clients=monitor_clients,
+            loop=loop,
         )
         self._asgiapp = socketio.ASGIApp(
             socketio_server=self._sio,
             socketio_path=socketio_path,
+            other_asgi_app=other_asgi_app,
         )
         self._app = app
         self._handlers: List[SIOHandler] = []
@@ -77,7 +84,7 @@ class FastAPISIO:
             self.asyncapi_schema = get_asyncapi(
                 id="urn:com:" + "_".join(self._app.title.lower().split(" ")),
                 title=self._app.title,
-                version=self._app.version,
+                version=self.version or self._app.version,
                 description=self._app.description,
                 servers=self._servers or {},
                 handlers=self._handlers,
