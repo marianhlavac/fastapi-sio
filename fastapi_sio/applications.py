@@ -1,5 +1,5 @@
 from asyncio import AbstractEventLoop
-from typing import Callable, Dict, List, Type, TypeVar
+from typing import Any, Callable, Dict, List, Optional, Type, TypeVar
 from pydantic import BaseModel
 import socketio
 from fastapi import FastAPI
@@ -128,6 +128,12 @@ class FastAPISIO:
         description: str | None = None,
         message_description: str | None = None,
         media_type: str = "application/json",
+        include: Optional[Any] = None,
+        exclude: Optional[Any] = None,
+        by_alias: bool = True,
+        exclude_unset: bool = False,
+        exclude_defaults: bool = False,
+        exclude_none: bool = False,
     ) -> SIOJsonEmitter[T]:
         emitter = SIOJsonEmitter(
             model=model,
@@ -139,6 +145,12 @@ class FastAPISIO:
                 model=model,
                 media_type=media_type,
                 message_description=message_description,
+                include=include,
+                exclude=exclude,
+                by_alias=by_alias,
+                exclude_unset=exclude_unset,
+                exclude_defaults=exclude_defaults,
+                exclude_none=exclude_none,
             ),
             sio=self._sio,
         )

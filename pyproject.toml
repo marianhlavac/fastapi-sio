@@ -1,9 +1,18 @@
 [tool.poetry]
 name = "fastapi-sio"
-version = "0.1.1"
+version = "0.2.0"
 description = "Socket.io for FastAPI with AsyncAPI documentation"
 authors = ["Marian Hlavac <m@marianhlavac.cz>"]
-license = "MIT"
+keywords = ["fastapi", "socket.io", "asyncapi"]
+readme = "README.md"
+license = "Apache-2.0"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "Topic :: Communications",
+    "Topic :: Software Development :: Libraries",
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
