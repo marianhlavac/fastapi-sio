@@ -13,6 +13,12 @@ def find_cors_configuration(app: FastAPI, default: Any) -> Any:
         if middleware.cls is not CORSMiddleware:
             continue
 
-        return middleware.options.get("allow_origins")
+        origins = middleware.options.get("allow_origins")
+        
+        # Incompatibility fix between CORSMiddleware and python-socketio
+        if origins == ["*"]:
+            origins = "*"
+
+        return origins
 
     return default
