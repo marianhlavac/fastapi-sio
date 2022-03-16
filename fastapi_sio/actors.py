@@ -1,6 +1,7 @@
 from typing import Any, Generic, Optional, Type, TypeVar, Union
 from pydantic import BaseModel
 from socketio import AsyncServer
+from fastapi.encoders import jsonable_encoder
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -48,8 +49,9 @@ class SIOJsonEmitter(Generic[T]):
         )
 
         await self._sio.emit(
-            self._meta.event, data=payload.json(**(meta_args | encode_kwargs)),
-            **kwargs
+            self._meta.event,
+            data=jsonable_encoder(payload, **(meta_args | encode_kwargs)),
+            **kwargs,
         )
 
 

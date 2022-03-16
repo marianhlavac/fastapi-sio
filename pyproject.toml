@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-sio"
-version = "0.2.0"
+version = "0.2.1"
 description = "Socket.io for FastAPI with AsyncAPI documentation"
 authors = ["Marian Hlavac <m@marianhlavac.cz>"]
 keywords = ["fastapi", "socket.io", "asyncapi"]
