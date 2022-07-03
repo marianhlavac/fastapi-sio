@@ -1,13 +1,13 @@
 """
-AsyncAPI 2.3.0
+AsyncAPI 2.4.0
 
-Ref: https://github.com/asyncapi/spec/blob/v2.3.0/spec/asyncapi.md
+Ref: https://github.com/asyncapi/spec/blob/v2.4.0/spec/asyncapi.md
 
 TODO:
     - Only a short subset of components is supported
 """
 
-ASYNCAPI_VERSION = "2.3.0"
+ASYNCAPI_VERSION = "2.4.0"
 
 from typing import Any, Dict, List
 from pydantic import BaseModel, Field
