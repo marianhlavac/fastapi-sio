@@ -1,6 +1,7 @@
 from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import re
 
 
 def find_cors_configuration(app: FastAPI, default: Any) -> Any:
@@ -14,11 +15,14 @@ def find_cors_configuration(app: FastAPI, default: Any) -> Any:
             continue
 
         origins = middleware.options.get("allow_origins")
-        
-        # Incompatibility fix between CORSMiddleware and python-socketio
-        if origins == ["*"]:
-            origins = "*"
+        if origins:
+            # Incompatibility fix between CORSMiddleware and python-socketio
+            if origins == ["*"]:
+                origins = "*"
+            return origins
 
-        return origins
+        origins_regex = middleware.options.get("allow_origin_regex")
+        if origins_regex:
+            return lambda value: re.match(origins_regex, value) is not None
 
     return default
