@@ -4,6 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 import re
 
 
+def match_origin(origin: str | None, pattern: str) -> bool:
+    """
+    Matches origin against a pattern.
+    """
+    return origin is not None and re.match(pattern, origin) is not None
+    
+
+
 def find_cors_configuration(app: FastAPI, default: Any) -> Any:
     """
     Looks through FastAPI's middlewares to figure
@@ -23,6 +31,6 @@ def find_cors_configuration(app: FastAPI, default: Any) -> Any:
 
         origins_regex = middleware.options.get("allow_origin_regex")
         if origins_regex:
-            return lambda value: re.match(origins_regex, value) is not None
+            return lambda origin: match_origin(origin, origins_regex)
 
     return default
