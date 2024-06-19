@@ -111,11 +111,11 @@ class AsyncAPIComponents(BaseModel):
 
 class AsyncAPI(BaseModel):
     asyncapi: str = ASYNCAPI_VERSION
-    id: str | None
+    id: str | None = None
     info: AsyncAPIInfo
-    servers: Dict[str, AsyncAPIServer] | None
-    defaultContentType: str | None
+    servers: Dict[str, AsyncAPIServer] | None = None
+    defaultContentType: str | None = None
     channels: Dict[str, AsyncAPIChannel]
-    components: AsyncAPIComponents | None
+    components: AsyncAPIComponents | None = None
     tags: List[AsyncAPITag] | None = None
     externalDocs: AsyncAPIExternalDocs | None = None

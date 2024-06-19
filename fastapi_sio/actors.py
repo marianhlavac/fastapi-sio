@@ -1,4 +1,4 @@
-from typing import Any, Generic, Optional, Type, TypeVar, Union
+from typing import Any, Generic, Optional, Type, TypeVar
 from pydantic import BaseModel
 from socketio import AsyncServer
 from fastapi.encoders import jsonable_encoder
@@ -8,12 +8,12 @@ T = TypeVar("T", bound=BaseModel)
 
 class SIOActorMeta(BaseModel):
     event: str
-    title: str | None
-    summary: str | None
-    description: str | None
-    model: Type[BaseModel] | None
+    title: str | None = None
+    summary: str | None = None
+    description: str | None = None
+    model: Type[BaseModel] | None = None
     media_type: str
-    message_description: str | None
+    message_description: str | None = None
 
 
 class SIOEmitterMeta(SIOActorMeta):
@@ -37,7 +37,7 @@ class SIOJsonEmitter(Generic[T]):
         return self._meta
 
     async def emit(self, payload: T, encode_kwargs = {}, **kwargs):
-        meta_args = self._meta.dict(
+        meta_args = self._meta.model_dump(
             include={
                 "include",
                 "exclude",
@@ -56,4 +56,4 @@ class SIOJsonEmitter(Generic[T]):
 
 
 class SIOHandler(SIOActorMeta):
-    name: str | None
+    name: str | None = None
