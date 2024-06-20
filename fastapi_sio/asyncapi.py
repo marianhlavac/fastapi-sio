@@ -1,7 +1,7 @@
 from typing import Dict, List, Type
 from pydantic import BaseModel
+from pydantic.json_schema import models_json_schema
 
-from pydantic.schema import schema
 from fastapi_sio.actors import SIOEmitterMeta, SIOHandler
 from fastapi_sio.schemas.asyncapi import (
     AsyncAPI,
@@ -15,7 +15,7 @@ from fastapi_sio.schemas.asyncapi import (
 )
 
 
-SCHEMA_REF_PREFIX = "#/components/schemas/"
+REF_TEMPLATE = "#/components/schemas/{model}"
 
 
 def get_asyncapi(
@@ -62,7 +62,7 @@ def get_channels(
                     contentType=handler.media_type,
                     description=handler.message_description,
                     payload=OpenAPIReference(
-                        **{"$ref": f"{SCHEMA_REF_PREFIX}{handler.model.__name__}"}
+                        **{"$ref": REF_TEMPLATE.format(model=handler.model.__name__)}
                     )
                     if handler.model is not None
                     else None,
@@ -80,7 +80,7 @@ def get_channels(
                     contentType=emitter.media_type,
                     description=emitter.message_description,
                     payload=OpenAPIReference(
-                        **{"$ref": f"{SCHEMA_REF_PREFIX}{emitter.model.__name__}"}
+                        **{"$ref": REF_TEMPLATE.format(model=emitter.model.__name__)}
                     )
                     if emitter.model is not None
                     else None,
@@ -92,6 +92,11 @@ def get_channels(
 
 
 def get_components(used_models: List[Type[BaseModel]]) -> AsyncAPIComponents:
+    _, schemas = models_json_schema(
+        [(model, "validation") for model in used_models],
+        ref_template=REF_TEMPLATE,
+    )
+
     return AsyncAPIComponents(
-        schemas=schema(used_models, ref_prefix=SCHEMA_REF_PREFIX)["definitions"],
+        schemas=schemas["$defs"],
     )
