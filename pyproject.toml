@@ -16,11 +16,12 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = ">=0.73.0,<1.0.0"
+fastapi = ">=0.111.0,<1.0.0"
 python-socketio = ">=4.0.0,<6.0.0"
-pydantic = "^2"
-websockets = ">=10.2,<11.0"
+pydantic = "^2.8.2"
+websockets = "^10.2"
 packaging = "^24.1"
+rfc3986 = ">=2.0.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.1.0", allow-prereleases = true}

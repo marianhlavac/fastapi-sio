@@ -7,6 +7,7 @@ from fastapi_sio.schemas.asyncapi import (
     AsyncAPI,
     AsyncAPIChannel,
     AsyncAPIComponents,
+    AsyncAPIIdentifier,
     AsyncAPIInfo,
     AsyncAPIMessage,
     AsyncAPIOperation,
@@ -15,7 +16,7 @@ from fastapi_sio.schemas.asyncapi import (
 )
 
 
-REF_TEMPLATE = "#/components/schemas/{model}"
+REF_SCHEMA_TEMPLATE = "#/components/schemas/{model}"
 
 
 def get_asyncapi(
@@ -33,7 +34,7 @@ def get_asyncapi(
     ] + [emitter.model for emitter in emitters if emitter.model is not None]
 
     return AsyncAPI(
-        id=id,
+        id=AsyncAPIIdentifier(id),
         info=AsyncAPIInfo(
             title=title,
             version=version,
@@ -42,50 +43,78 @@ def get_asyncapi(
         servers=servers,
         defaultContentType=defaultContentType,
         channels=get_channels(handlers, emitters),
+        operations=get_operations(handlers, emitters),
         components=get_components(used_models),
-        tags=None,
-        externalDocs=None,  # TODO: refer fastapi docs
     )
+
+
+def get_operations(handlers: List[SIOHandler], emitters: List[SIOEmitterMeta]):
+    return {
+        handler.event: AsyncAPIOperation(
+            action="send",
+            channel=OpenAPIReference(**{"$ref": "aaa"}),
+            title=handler.name,
+            summary=handler.summary,
+            description=handler.description,
+        )
+        for handler in handlers
+    } | {
+        emitter.event: AsyncAPIOperation(
+            action="receive",
+            channel=OpenAPIReference(**{"$ref": "aaa"}),
+            summary=emitter.summary,
+            description=emitter.description,
+        )
+        for emitter in emitters
+    }
 
 
 def get_channels(
     handlers: List[SIOHandler], emitters: List[SIOEmitterMeta]
-) -> Dict[str, AsyncAPIChannel]:
+) -> dict[str, AsyncAPIChannel]:
     return {
         handler.event: AsyncAPIChannel(
-            publish=AsyncAPIOperation(
-                operationId=handler.name,
-                summary=handler.summary,
-                description=handler.description,
-                message=AsyncAPIMessage(
-                    name=handler.event,
+            title=handler.name,
+            summary=handler.summary,
+            description=handler.description,
+            messages={
+                handler.event: AsyncAPIMessage(
+                    name=handler.name,
                     contentType=handler.media_type,
                     description=handler.message_description,
                     payload=OpenAPIReference(
-                        **{"$ref": REF_TEMPLATE.format(model=handler.model.__name__)}
+                        **{
+                            "$ref": REF_SCHEMA_TEMPLATE.format(
+                                model=handler.model.__name__
+                            )
+                        }
                     )
                     if handler.model is not None
                     else None,
-                ),
-            ),
+                )
+            },
         )
         for handler in handlers
     } | {
         emitter.event: AsyncAPIChannel(
-            subscribe=AsyncAPIOperation(
-                summary=emitter.summary,
-                description=emitter.description,
-                message=AsyncAPIMessage(
+            summary=emitter.summary,
+            description=emitter.description,
+            messages={
+                emitter.event: AsyncAPIMessage(
                     name=emitter.event,
                     contentType=emitter.media_type,
                     description=emitter.message_description,
                     payload=OpenAPIReference(
-                        **{"$ref": REF_TEMPLATE.format(model=emitter.model.__name__)}
+                        **{
+                            "$ref": REF_SCHEMA_TEMPLATE.format(
+                                model=emitter.model.__name__
+                            )
+                        }
                     )
                     if emitter.model is not None
                     else None,
-                ),
-            ),
+                )
+            },
         )
         for emitter in emitters
     }
@@ -94,7 +123,7 @@ def get_channels(
 def get_components(used_models: List[Type[BaseModel]]) -> AsyncAPIComponents:
     _, schemas = models_json_schema(
         [(model, "validation") for model in used_models],
-        ref_template=REF_TEMPLATE,
+        ref_template=REF_SCHEMA_TEMPLATE,
     )
 
     return AsyncAPIComponents(

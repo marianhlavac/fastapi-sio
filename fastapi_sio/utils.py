@@ -1,8 +1,16 @@
+from email.utils import parseaddr
 from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from packaging.version import parse
 import re
+
+from pydantic import ValidationError
+from rfc3986.validators import Validator
+from rfc3986.uri import URIReference
+from rfc3986.exceptions import RFC3986Exception
+
+rfc3986_validator = Validator()
 
 
 def starlette_version() -> tuple[int, int, int]:
@@ -50,3 +58,17 @@ def find_cors_configuration(app: FastAPI, default: Any) -> Any:
             return lambda origin: match_origin(origin, origins_regex)
 
     return default
+
+
+def validate_url_rfc3986(value: str) -> None:
+    reference = URIReference.from_string(value)
+    try:
+        rfc3986_validator.validate(reference)
+    except RFC3986Exception:
+        raise ValidationError("Values is not a valid RFC3986 URI")
+
+
+def validate_email_address(value: str):
+    parsed_addr = parseaddr(value)
+    if parsed_addr == ("", ""):
+        raise ValidationError("Wrong e-mail address format")
