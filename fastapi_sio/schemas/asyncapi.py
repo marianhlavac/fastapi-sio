@@ -87,38 +87,49 @@ class AsyncAPIOneOfMessages(BaseModel):
     oneOf: AsyncAPIMessage | OpenAPIReference
 
 
-class AsyncAPISecurityScheme(BaseModel):
+class AsyncAPISecuritySchemeOther(BaseModel):
     type: SecuritySchemeType
     description: str | None = None
 
 
-class AsyncAPISecuritySchemeHttpApiKey(AsyncAPISecurityScheme):
+class AsyncAPISecuritySchemeHttpApiKey(BaseModel):
     type: SecuritySchemeType = "httpApiKey"
     name: str
     location_in: Annotated[str, Field(alias="in")]
 
 
-class AsyncAPISecuritySchemeApiKey(AsyncAPISecurityScheme):
+class AsyncAPISecuritySchemeApiKey(BaseModel):
     type: SecuritySchemeType = "apiKey"
     location_in: Annotated[str, Field(alias="in")]
 
 
-class AsyncAPISecuritySchemeHttp(AsyncAPISecurityScheme):
+class AsyncAPISecuritySchemeHttp(BaseModel):
     type: SecuritySchemeType = "http"
     scheme: str
     bearerFormat: str | None = None
 
 
-class AsyncAPISecuritySchemeOAuth2(AsyncAPISecurityScheme):
+class AsyncAPISecuritySchemeOAuth2(BaseModel):
     type: SecuritySchemeType = "oauth2"
     flows: Any  # TODO
     scopes: list[str] | None = None
 
 
-class AsyncAPISecuritySchemeOpenIDConnect(AsyncAPISecurityScheme):
+class AsyncAPISecuritySchemeOpenIDConnect(BaseModel):
     type: SecuritySchemeType = "openIdConnect"
     openIdConnectUrl: str
     scopes: list[str] | None = None
+
+
+AnySecurityScheme = (
+    AsyncAPISecuritySchemeOther
+    | AsyncAPISecuritySchemeHttpApiKey
+    | AsyncAPISecuritySchemeApiKey
+    | AsyncAPISecuritySchemeHttp
+    | AsyncAPISecuritySchemeOAuth2
+    | AsyncAPISecuritySchemeOpenIDConnect
+    | OpenAPIReference
+)
 
 
 class AsyncAPIOperation(BaseModel):
@@ -127,7 +138,7 @@ class AsyncAPIOperation(BaseModel):
     title: str | None = None
     summary: str | None = None
     description: str | None = None
-    security: list[AsyncAPISecurityScheme | OpenAPIReference] | None = None
+    security: list[AnySecurityScheme] | None = None
     tags: list[AsyncAPITag] | None = None
     externalDocs: AsyncAPIExternalDocs | OpenAPIReference | None = None
     bindings: OpenAPIReference | None = None  # TODO
@@ -171,7 +182,7 @@ class AsyncAPIServer(BaseModel):
     title: str | None = None
     summary: str | None = None
     variables: Mapping[str, AsyncAPIServerVariable | OpenAPIReference] | None = None
-    security: list[AsyncAPISecurityScheme | OpenAPIReference] | None = None
+    security: list[AnySecurityScheme | OpenAPIReference] | None = None
     tags: list[AsyncAPITag] | None = None
     externalDocs: AsyncAPIExternalDocs | OpenAPIReference | None = None
     bindings: OpenAPIReference | None = None  # TODO
