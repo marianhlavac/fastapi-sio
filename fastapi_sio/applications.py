@@ -41,7 +41,7 @@ class FastAPISIO:
         async_mode: str = "asgi",
         asyncapi_url: str | None = "/sio/docs",
         version: str | None = None,
-        other_asgi_app = None,
+        other_asgi_app: bool | None = None,
         servers: Dict[str, AsyncAPIServer] | None = None,
         loop: AbstractEventLoop | None = None,
         monitor_clients: bool = True,
@@ -161,6 +161,7 @@ class FastAPISIO:
     def connect(self):
         def decorator(fn: Callable):
             self._sio.on("connect", handler=fn)
+
         return decorator
 
     @property

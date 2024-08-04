@@ -21,7 +21,7 @@ def starlette_version() -> tuple[int, int, int]:
     return version.major, version.minor, version.micro
 
 
-def get_middleware_options(middleware):
+def get_middleware_options(middleware) -> dict[Any, Any]:
     if starlette_version() >= (0, 35, 0):
         return middleware.kwargs
     else:

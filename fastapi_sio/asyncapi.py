@@ -17,6 +17,7 @@ from fastapi_sio.schemas.asyncapi import (
 
 
 REF_SCHEMA_TEMPLATE = "#/components/schemas/{model}"
+REF_CHANNEL_TEMPLATE = "#/channels/{channel}"
 
 
 def get_asyncapi(
@@ -52,7 +53,9 @@ def get_operations(handlers: List[SIOHandler], emitters: List[SIOEmitterMeta]):
     return {
         handler.event: AsyncAPIOperation(
             action="send",
-            channel=OpenAPIReference(**{"$ref": "aaa"}),
+            channel=OpenAPIReference(
+                **{"$ref": REF_CHANNEL_TEMPLATE.format(channel=handler.event)}
+            ),
             title=handler.name,
             summary=handler.summary,
             description=handler.description,
@@ -61,7 +64,9 @@ def get_operations(handlers: List[SIOHandler], emitters: List[SIOEmitterMeta]):
     } | {
         emitter.event: AsyncAPIOperation(
             action="receive",
-            channel=OpenAPIReference(**{"$ref": "aaa"}),
+            channel=OpenAPIReference(
+                **{"$ref": REF_CHANNEL_TEMPLATE.format(channel=emitter.event)}
+            ),
             summary=emitter.summary,
             description=emitter.description,
         )
@@ -74,9 +79,6 @@ def get_channels(
 ) -> dict[str, AsyncAPIChannel]:
     return {
         handler.event: AsyncAPIChannel(
-            title=handler.name,
-            summary=handler.summary,
-            description=handler.description,
             messages={
                 handler.event: AsyncAPIMessage(
                     name=handler.name,
@@ -97,8 +99,6 @@ def get_channels(
         for handler in handlers
     } | {
         emitter.event: AsyncAPIChannel(
-            summary=emitter.summary,
-            description=emitter.description,
             messages={
                 emitter.event: AsyncAPIMessage(
                     name=emitter.event,

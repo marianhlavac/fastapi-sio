@@ -36,7 +36,7 @@ class SIOJsonEmitter(Generic[T]):
     def get_meta(self):
         return self._meta
 
-    async def emit(self, payload: T, encode_kwargs = {}, **kwargs):
+    async def emit(self, payload: T, encode_kwargs={}, **kwargs):
         meta_args = self._meta.model_dump(
             include={
                 "include",
